@@ -42,23 +42,8 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add memoire_catalogue.json
           git diff --staged --quiet && exit 0
-          BASE_HEAD="$(git rev-parse HEAD)"
           git commit -m "Mise a jour du catalogue"
           BRANCH_TO_PUSH="$GITHUB_REF_NAME"
-          COMMIT_TO_PUSH="$(git rev-parse HEAD)"
-
-          for i in 1 2 3; do
-            git reset --hard "$COMMIT_TO_PUSH"
-            git fetch origin "$BRANCH_TO_PUSH"
-            if ! git rebase FETCH_HEAD; then
-              git rebase --abort || true
-              sleep 2
-              continue
-            fi
-            git push origin "HEAD:$BRANCH_TO_PUSH" && exit 0
-            sleep 2
-          done
-
-          git reset --hard "$BASE_HEAD"
-          echo "Échec du push après 3 tentatives."
-          exit 1
+          git fetch origin "$BRANCH_TO_PUSH"
+          git rebase FETCH_HEAD
+          git push origin "HEAD:$BRANCH_TO_PUSH"
