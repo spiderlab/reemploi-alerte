@@ -11,6 +11,7 @@ concurrency:
 
 jobs:
   verifier-catalogue:
+    if: startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +44,7 @@ jobs:
           git add memoire_catalogue.json
           git diff --staged --quiet && exit 0
           git commit -m "Mise a jour du catalogue"
-          BRANCH_TO_PUSH="$GITHUB_REF_NAME"
+          BRANCH_TO_PUSH="${GITHUB_REF#refs/heads/}"
           git fetch origin "$BRANCH_TO_PUSH"
           git rebase FETCH_HEAD
           git push origin "HEAD:$BRANCH_TO_PUSH"
