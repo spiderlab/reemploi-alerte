@@ -39,7 +39,7 @@ jobs:
           git add memoire_catalogue.json
           git diff --staged --quiet && exit 0
           git commit -m "Mise a jour du catalogue"
-          BRANCH_TO_PUSH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          BRANCH_TO_PUSH="$GITHUB_REF_NAME"
           ORIGINAL_HEAD="$(git rev-parse HEAD)"
 
           for i in 1 2 3; do
