@@ -5,6 +5,10 @@ on:
     - cron: '0 11 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: verifier-catalogue-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   verifier-catalogue:
     runs-on: ubuntu-latest
