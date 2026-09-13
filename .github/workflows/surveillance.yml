@@ -30,6 +30,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Synchronisation avec la branche distante
+        run: |
+          BRANCH_TO_PUSH="${GITHUB_REF#refs/heads/}"
+          git fetch origin "$BRANCH_TO_PUSH"
+          git checkout "$BRANCH_TO_PUSH"
+          git reset --hard "origin/$BRANCH_TO_PUSH"
+
       - name: Installation de Playwright
         run: |
           pip install playwright
