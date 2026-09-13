@@ -50,7 +50,7 @@ jobs:
           for i in 1 2 3; do
             git reset --hard "$COMMIT_TO_PUSH"
             git fetch origin "$BRANCH_TO_PUSH"
-            if ! git rebase "origin/$BRANCH_TO_PUSH"; then
+            if ! git rebase FETCH_HEAD; then
               git rebase --abort || true
               sleep 2
               continue
