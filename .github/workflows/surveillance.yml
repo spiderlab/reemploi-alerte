@@ -5,6 +5,10 @@ on:
     - cron: '0 7 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  issues: write
+
 jobs:
   verifier-catalogue:
     runs-on: ubuntu-latest
@@ -12,6 +16,8 @@ jobs:
     steps:
       - name: Récupération du code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Configuration de Python
         uses: actions/setup-python@v5
