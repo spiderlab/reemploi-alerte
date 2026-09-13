@@ -1,0 +1,39 @@
+name: Surveillance Catalogue Reemploi
+
+on:
+  schedule:
+    # Tous les jours à 07h00 UTC (09h00 heure française en été, 08h00 en hiver)
+    - cron: '0 7 * * *'
+  # Permet aussi de lancer le script manuellement avec un bouton
+  workflow_dispatch:
+
+jobs:
+  verifier-catalogue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installation de Playwright
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+
+      - name: Exécution du scraper
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scraper.py
+
+      - name: Sauvegarde de l'état du catalogue
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add memoire_catalogue.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Mise a jour du catalogue" && git push)
