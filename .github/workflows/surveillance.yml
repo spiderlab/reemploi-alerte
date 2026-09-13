@@ -5,18 +5,37 @@ on:
     - cron: '0 11 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: verifier-catalogue-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
 jobs:
   verifier-catalogue:
+    if: startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
 
     steps:
       - name: Récupération du code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: Configuration de Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Synchronisation avec la branche distante
+        run: |
+          BRANCH_TO_PUSH="${GITHUB_REF#refs/heads/}"
+          git fetch origin "$BRANCH_TO_PUSH"
+          git checkout "$BRANCH_TO_PUSH"
+          git reset --hard "origin/$BRANCH_TO_PUSH"
 
       - name: Installation de Playwright
         run: |
@@ -30,7 +49,11 @@ jobs:
           python scraper.py
 
       - name: Sauvegarde de l'état du catalogue
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Mise a jour du catalogue"
-          file_pattern: memoire_catalogue.json
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add memoire_catalogue.json
+          git diff --staged --quiet && exit 0
+          git commit -m "Mise a jour du catalogue"
+          BRANCH_TO_PUSH="${GITHUB_REF#refs/heads/}"
+          git push origin "HEAD:$BRANCH_TO_PUSH"
