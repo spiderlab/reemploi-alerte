@@ -41,10 +41,13 @@ jobs:
           BRANCH_TO_PUSH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
 
           for i in 1 2 3; do
-            if git pull --rebase origin "$BRANCH_TO_PUSH"; then
-              git push origin "HEAD:$BRANCH_TO_PUSH" && exit 0
+            git fetch origin "$BRANCH_TO_PUSH"
+            if ! git rebase "origin/$BRANCH_TO_PUSH"; then
+              git rebase --abort || true
+              sleep 2
+              continue
             fi
-            git rebase --abort || true
+            git push origin "HEAD:$BRANCH_TO_PUSH" && exit 0
             sleep 2
           done
 
