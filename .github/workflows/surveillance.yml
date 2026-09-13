@@ -9,6 +9,10 @@ concurrency:
   group: verifier-catalogue-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: write
+  issues: write
+
 jobs:
   verifier-catalogue:
     if: startsWith(github.ref, 'refs/heads/')
@@ -45,6 +49,4 @@ jobs:
           git diff --staged --quiet && exit 0
           git commit -m "Mise a jour du catalogue"
           BRANCH_TO_PUSH="${GITHUB_REF#refs/heads/}"
-          git fetch origin "$BRANCH_TO_PUSH"
-          git rebase FETCH_HEAD
           git push origin "HEAD:$BRANCH_TO_PUSH"
