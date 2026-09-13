@@ -35,6 +35,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add memoire_catalogue.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Mise a jour du catalogue" && git push origin main)
+          git commit -m "Mise a jour du catalogue" || echo "Aucun changement a sauvegarder"
+          git pull --rebase origin main
+          git push origin main
