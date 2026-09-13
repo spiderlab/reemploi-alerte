@@ -38,10 +38,11 @@ jobs:
           git add memoire_catalogue.json
           git diff --quiet && git diff --staged --quiet && exit 0
           git commit -m "Mise a jour du catalogue"
+          BRANCH_TO_PUSH="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
 
           for i in 1 2 3; do
-            git pull --rebase origin "$GITHUB_REF_NAME"
-            git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            git pull --rebase origin "$BRANCH_TO_PUSH"
+            git push origin "HEAD:$BRANCH_TO_PUSH" && exit 0
             sleep 2
           done
 
