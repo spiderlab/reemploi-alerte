@@ -10,8 +10,8 @@ def recuperer_annonces():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto(URL_CIBLE, wait_until="networkidle", timeout=60000)
-        page.wait_for_timeout(5000)
+        page.goto(URL_CIBLE, wait_until="domcontentloaded", timeout=60000)
+        page.wait_for_timeout(8000)
 
         cartes = page.locator("main li, main [role='listitem']").all()
         resultats = []
